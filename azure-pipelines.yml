@@ -249,6 +249,7 @@ stages:
   - job: Deploy_K2Bridge
     displayName: Deploy K2Bridge
     variables:
+      ELASTICSEARCH_VERSION: 7.5.2
       ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
         NOT_MASTER_ES_CONFIG: "--set elasticsearch.replicas=2 --set elasticsearch.minimumMasterNodes=2"
     steps:
@@ -286,6 +287,7 @@ stages:
           --set settings.collectTelemetry="$COLLECT_TELEMETRY" \
           --set settings.instrumentationKey="$TELEMETRY_KEY" \
           --set settings.enableQueryLogging=true \
+          --set elasticsearch.imageTag=${ELASTICSEARCH_VERSION} \
           ${NOT_MASTER_ES_CONFIG:-} #defaults to an empty string
         # List charts after deploying (for job log)
         helm list
@@ -312,7 +314,7 @@ stages:
         helm upgrade --install elasticsearchqa elastic/elasticsearch \
           --wait --timeout 45m \
           --set image=docker.elastic.co/elasticsearch/elasticsearch-oss \
-          --set imageTag=6.8.5 \
+          --set imageTag=${ELASTICSEARCH_VERSION} \
           --set clusterName=elasticsearchqa \
           --set replicas=1 \
           --set persistence.enabled=false \

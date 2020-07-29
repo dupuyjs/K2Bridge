@@ -51,7 +51,8 @@ namespace K2Bridge
                 Logger.LogDebug("Translate params: header:{@header}, query:{@query}", header, query.ToSensitiveData());
 
                 // Prepare the esDSL object, except some fields such as the query field which will be built later
-                var elasticSearchDsl = JsonConvert.DeserializeObject<ElasticSearchDSL>(query);
+                // Json.Net automatically adjust string to dates which messes up the formats, so disabling that.
+                var elasticSearchDsl = JsonConvert.DeserializeObject<ElasticSearchDSL>(query, new JsonSerializerSettings() { DateParseHandling = DateParseHandling.None });
 
                 // deserialize the headers and extract the index name
                 var headerDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(header);
