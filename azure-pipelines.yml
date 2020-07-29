@@ -231,6 +231,8 @@ stages:
   # Deploy a new Kusto db
   # Either if the db name is not set to 'demo' which means it is the Dev CI process
   # Or it is the Demo CI process AND the RUN_CREATE_DEMO_KUSTO was set
+  variables:
+    ELASTICSEARCH_VERSION: 7.5.2
   jobs:
   - job: Deploy_Kusto
     displayName: Provision a new Kusto database
@@ -249,7 +251,6 @@ stages:
   - job: Deploy_K2Bridge
     displayName: Deploy K2Bridge
     variables:
-      ELASTICSEARCH_VERSION: 7.5.2
       ${{ if ne(variables['Build.SourceBranchName'], 'master') }}:
         NOT_MASTER_ES_CONFIG: "--set elasticsearch.replicas=2 --set elasticsearch.minimumMasterNodes=2"
     steps:
